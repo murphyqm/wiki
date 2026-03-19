@@ -1,0 +1,125 @@
+# Slurm test jobs
+
+Minimal `sbatch` test jobs using `sleep` to compare baseline vs funded account/QoS behavior.
+
+If you do not specify an account, the job should run on the default account with its default QoS; for a funded project, add `#SBATCH --account=proj_A` in the script or submit with `sbatch --account=proj_A script.sh`.
+
+To check queue wait after submission:
+
+```bash
+sacct -j <jobid> --format=JobID,JobName,Partition,Account,QOS,Submit,Start,Elapsed,State
+```
+
+## Tiny and fast
+
+```bash
+#!/bin/bash
+#SBATCH --job-name=tiny-2m
+#SBATCH --time=00:02:00
+#SBATCH --cpus-per-task=1
+#SBATCH --mem=256M
+
+date
+sleep 120
+date
+```
+
+## Short small job
+
+```bash
+#!/bin/bash
+#SBATCH --job-name=small-10m
+#SBATCH --time=00:10:00
+#SBATCH --cpus-per-task=1
+#SBATCH --mem=1G
+
+date
+sleep 600
+date
+```
+
+## Medium job
+
+```bash
+#!/bin/bash
+#SBATCH --job-name=medium-1h
+#SBATCH --time=01:00:00
+#SBATCH --cpus-per-task=2
+#SBATCH --mem=4G
+
+date
+sleep 3600
+date
+```
+
+## Long single-node job
+
+```bash
+#!/bin/bash
+#SBATCH --job-name=long-8h
+#SBATCH --time=08:00:00
+#SBATCH --cpus-per-task=4
+#SBATCH --mem=8G
+
+date
+sleep 28800
+date
+```
+
+## Large CPU job
+
+```bash
+#!/bin/bash
+#SBATCH --job-name=large-cpu-2h
+#SBATCH --time=02:00:00
+#SBATCH --cpus-per-task=32
+#SBATCH --mem=32G
+
+date
+sleep 7200
+date
+```
+
+## Large memory job
+
+```bash
+#!/bin/bash
+#SBATCH --job-name=large-mem-2h
+#SBATCH --time=02:00:00
+#SBATCH --cpus-per-task=8
+#SBATCH --mem=128G
+
+date
+sleep 7200
+date
+```
+
+## Same script, funded account test
+
+```bash
+#!/bin/bash
+#SBATCH --job-name=funded-check-30m
+#SBATCH --time=00:30:00
+#SBATCH --cpus-per-task=4
+#SBATCH --mem=8G
+#SBATCH --account=proj_A
+
+date
+sleep 1800
+date
+```
+
+## Same shape, explicit partition test
+
+```bash
+#!/bin/bash
+#SBATCH --job-name=nodes-check-30m
+#SBATCH --time=00:30:00
+#SBATCH --cpus-per-task=4
+#SBATCH --mem=8G
+#SBATCH --partition=nodes
+
+date
+sleep 1800
+date
+```
