@@ -1,12 +1,5 @@
 [
   {
-    "objectID": "index.html",
-    "href": "index.html",
-    "title": "My Wiki",
-    "section": "",
-    "text": "This is a Quarto website.\nTo learn more about Quarto websites visit https://quarto.org/docs/websites."
-  },
-  {
     "objectID": "knowledge-dump/slurm-qos.html",
     "href": "knowledge-dump/slurm-qos.html",
     "title": "Quick reference QoS commands for Slurm",
@@ -16,6 +9,13 @@
       "Knowledge Dump",
       "Quick reference QoS commands for Slurm"
     ]
+  },
+  {
+    "objectID": "index.html",
+    "href": "index.html",
+    "title": "My Wiki",
+    "section": "",
+    "text": "This is a Quarto website.\nTo learn more about Quarto websites visit https://quarto.org/docs/websites."
   },
   {
     "objectID": "knowledge-dump/install_slurm.html",
