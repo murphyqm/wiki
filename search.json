@@ -11,13 +11,6 @@
     ]
   },
   {
-    "objectID": "index.html",
-    "href": "index.html",
-    "title": "My Wiki",
-    "section": "",
-    "text": "This is a Quarto website.\nTo learn more about Quarto websites visit https://quarto.org/docs/websites."
-  },
-  {
     "objectID": "knowledge-dump/install_slurm.html",
     "href": "knowledge-dump/install_slurm.html",
     "title": "Install Slurm on WSL: test environment",
@@ -26,6 +19,112 @@
     "crumbs": [
       "Knowledge Dump",
       "Install Slurm on WSL: test environment"
+    ]
+  },
+  {
+    "objectID": "index.html",
+    "href": "index.html",
+    "title": "My Wiki",
+    "section": "",
+    "text": "This is a Quarto website.\nTo learn more about Quarto websites visit https://quarto.org/docs/websites."
+  },
+  {
+    "objectID": "knowledge-dump/slurm-test-jobs.html",
+    "href": "knowledge-dump/slurm-test-jobs.html",
+    "title": "Slurm test jobs",
+    "section": "",
+    "text": "Minimal sbatch test jobs using sleep to compare baseline vs funded account/QoS behavior.\nIf you do not specify an account, the job should run on the default account with its default QoS; for a funded project, add #SBATCH --account=proj_A in the script or submit with sbatch --account=proj_A script.sh.\nTo check queue wait after submission:\nsacct -j &lt;jobid&gt; --format=JobID,JobName,Partition,Account,QOS,Submit,Start,Elapsed,State\n\n\n#!/bin/bash\n#SBATCH --job-name=tiny-2m\n#SBATCH --time=00:02:00\n#SBATCH --cpus-per-task=1\n#SBATCH --mem=256M\n\ndate\nsleep 120\ndate\n\n\n\n#!/bin/bash\n#SBATCH --job-name=small-10m\n#SBATCH --time=00:10:00\n#SBATCH --cpus-per-task=1\n#SBATCH --mem=1G\n\ndate\nsleep 600\ndate\n\n\n\n#!/bin/bash\n#SBATCH --job-name=medium-1h\n#SBATCH --time=01:00:00\n#SBATCH --cpus-per-task=2\n#SBATCH --mem=4G\n\ndate\nsleep 3600\ndate\n\n\n\n#!/bin/bash\n#SBATCH --job-name=long-8h\n#SBATCH --time=08:00:00\n#SBATCH --cpus-per-task=4\n#SBATCH --mem=8G\n\ndate\nsleep 28800\ndate\n\n\n\n#!/bin/bash\n#SBATCH --job-name=large-cpu-2h\n#SBATCH --time=02:00:00\n#SBATCH --cpus-per-task=32\n#SBATCH --mem=32G\n\ndate\nsleep 7200\ndate\n\n\n\n#!/bin/bash\n#SBATCH --job-name=large-mem-2h\n#SBATCH --time=02:00:00\n#SBATCH --cpus-per-task=8\n#SBATCH --mem=128G\n\ndate\nsleep 7200\ndate\n\n\n\n#!/bin/bash\n#SBATCH --job-name=funded-check-30m\n#SBATCH --time=00:30:00\n#SBATCH --cpus-per-task=4\n#SBATCH --mem=8G\n#SBATCH --account=proj_A\n\ndate\nsleep 1800\ndate\n\n\n\n#!/bin/bash\n#SBATCH --job-name=nodes-check-30m\n#SBATCH --time=00:30:00\n#SBATCH --cpus-per-task=4\n#SBATCH --mem=8G\n#SBATCH --partition=nodes\n\ndate\nsleep 1800\ndate",
+    "crumbs": [
+      "Knowledge Dump",
+      "Slurm test jobs"
+    ]
+  },
+  {
+    "objectID": "knowledge-dump/slurm-test-jobs.html#tiny-and-fast",
+    "href": "knowledge-dump/slurm-test-jobs.html#tiny-and-fast",
+    "title": "Slurm test jobs",
+    "section": "",
+    "text": "#!/bin/bash\n#SBATCH --job-name=tiny-2m\n#SBATCH --time=00:02:00\n#SBATCH --cpus-per-task=1\n#SBATCH --mem=256M\n\ndate\nsleep 120\ndate",
+    "crumbs": [
+      "Knowledge Dump",
+      "Slurm test jobs"
+    ]
+  },
+  {
+    "objectID": "knowledge-dump/slurm-test-jobs.html#short-small-job",
+    "href": "knowledge-dump/slurm-test-jobs.html#short-small-job",
+    "title": "Slurm test jobs",
+    "section": "",
+    "text": "#!/bin/bash\n#SBATCH --job-name=small-10m\n#SBATCH --time=00:10:00\n#SBATCH --cpus-per-task=1\n#SBATCH --mem=1G\n\ndate\nsleep 600\ndate",
+    "crumbs": [
+      "Knowledge Dump",
+      "Slurm test jobs"
+    ]
+  },
+  {
+    "objectID": "knowledge-dump/slurm-test-jobs.html#medium-job",
+    "href": "knowledge-dump/slurm-test-jobs.html#medium-job",
+    "title": "Slurm test jobs",
+    "section": "",
+    "text": "#!/bin/bash\n#SBATCH --job-name=medium-1h\n#SBATCH --time=01:00:00\n#SBATCH --cpus-per-task=2\n#SBATCH --mem=4G\n\ndate\nsleep 3600\ndate",
+    "crumbs": [
+      "Knowledge Dump",
+      "Slurm test jobs"
+    ]
+  },
+  {
+    "objectID": "knowledge-dump/slurm-test-jobs.html#long-single-node-job",
+    "href": "knowledge-dump/slurm-test-jobs.html#long-single-node-job",
+    "title": "Slurm test jobs",
+    "section": "",
+    "text": "#!/bin/bash\n#SBATCH --job-name=long-8h\n#SBATCH --time=08:00:00\n#SBATCH --cpus-per-task=4\n#SBATCH --mem=8G\n\ndate\nsleep 28800\ndate",
+    "crumbs": [
+      "Knowledge Dump",
+      "Slurm test jobs"
+    ]
+  },
+  {
+    "objectID": "knowledge-dump/slurm-test-jobs.html#large-cpu-job",
+    "href": "knowledge-dump/slurm-test-jobs.html#large-cpu-job",
+    "title": "Slurm test jobs",
+    "section": "",
+    "text": "#!/bin/bash\n#SBATCH --job-name=large-cpu-2h\n#SBATCH --time=02:00:00\n#SBATCH --cpus-per-task=32\n#SBATCH --mem=32G\n\ndate\nsleep 7200\ndate",
+    "crumbs": [
+      "Knowledge Dump",
+      "Slurm test jobs"
+    ]
+  },
+  {
+    "objectID": "knowledge-dump/slurm-test-jobs.html#large-memory-job",
+    "href": "knowledge-dump/slurm-test-jobs.html#large-memory-job",
+    "title": "Slurm test jobs",
+    "section": "",
+    "text": "#!/bin/bash\n#SBATCH --job-name=large-mem-2h\n#SBATCH --time=02:00:00\n#SBATCH --cpus-per-task=8\n#SBATCH --mem=128G\n\ndate\nsleep 7200\ndate",
+    "crumbs": [
+      "Knowledge Dump",
+      "Slurm test jobs"
+    ]
+  },
+  {
+    "objectID": "knowledge-dump/slurm-test-jobs.html#same-script-funded-account-test",
+    "href": "knowledge-dump/slurm-test-jobs.html#same-script-funded-account-test",
+    "title": "Slurm test jobs",
+    "section": "",
+    "text": "#!/bin/bash\n#SBATCH --job-name=funded-check-30m\n#SBATCH --time=00:30:00\n#SBATCH --cpus-per-task=4\n#SBATCH --mem=8G\n#SBATCH --account=proj_A\n\ndate\nsleep 1800\ndate",
+    "crumbs": [
+      "Knowledge Dump",
+      "Slurm test jobs"
+    ]
+  },
+  {
+    "objectID": "knowledge-dump/slurm-test-jobs.html#same-shape-explicit-partition-test",
+    "href": "knowledge-dump/slurm-test-jobs.html#same-shape-explicit-partition-test",
+    "title": "Slurm test jobs",
+    "section": "",
+    "text": "#!/bin/bash\n#SBATCH --job-name=nodes-check-30m\n#SBATCH --time=00:30:00\n#SBATCH --cpus-per-task=4\n#SBATCH --mem=8G\n#SBATCH --partition=nodes\n\ndate\nsleep 1800\ndate",
+    "crumbs": [
+      "Knowledge Dump",
+      "Slurm test jobs"
     ]
   }
 ]
