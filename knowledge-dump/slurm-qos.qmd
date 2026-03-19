@@ -1,0 +1,36 @@
+# Quick reference QoS commands for Slurm
+
+To see what QoS have been set up on the system:
+
+```bash
+# listing QoS
+sacctmgr show qos format=Name,Priority,MaxWall,MaxTRESPU,MaxJobsPU,GrpTRES
+
+# parsable output
+sacctmgr -P show qos format=Name,Priority,MaxWall,MaxTRESPU,MaxJobsPU,GrpTRES
+```
+
+(N.B. to turn output from `-p`-formatted commands into markdown tables, just add a row of hyphens and pipes after the first line)
+
+To see account information for the system:
+
+```bash
+# Accounts info with formatting
+sacctmgr show assoc format=Account%30,User%20,Partition%15,QOS%30
+
+# parsable output (easy to grep/cut)
+sacctmgr -P show account format=Account,Descr,ParentName
+```
+
+To show history of QoS changes:
+
+```bash
+# All transations
+sacctmgr show transactions
+
+# Transactions by a specific user
+sacctmgr show transactions Actor=<username>
+
+# Show all transactions, but filter out account creation
+sacctmgr show transactions | grep -vE "Add Associations|Add Users"
+```

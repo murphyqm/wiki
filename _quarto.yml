@@ -1,0 +1,18 @@
+project:
+  type: website
+
+website:
+  title: "My Wiki"
+  sidebar:
+    style: "docked"
+    search: true
+    contents: knowledge-dump
+
+format:
+  html:
+    theme: cosmo
+    css: styles.css
+    toc: true
+
+
+
