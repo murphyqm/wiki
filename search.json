@@ -11,6 +11,24 @@
     ]
   },
   {
+    "objectID": "knowledge-dump/slurm-check-queues.html",
+    "href": "knowledge-dump/slurm-check-queues.html",
+    "title": "Checking Slurm Queues",
+    "section": "",
+    "text": "Checking Slurm Queues\nList all the partitons available:\nsinfo\nTo see states/allocation of different partitions:\nsinfo -s\nTo see detailed node information:\nsinfo -N\nThen you can check the queue for a specific partition:\nsqueue -p partitionname\nAlso check what reservations exist on the hpc:\nscontrol show reservations\nAnd see which is active etc.:\nsinfo -T\nAnd then check the queue in a specific reservation:\nsqueue --reservation=reservation_name",
+    "crumbs": [
+      "Knowledge Dump",
+      "Checking Slurm Queues"
+    ]
+  },
+  {
+    "objectID": "index.html",
+    "href": "index.html",
+    "title": "My Wiki",
+    "section": "",
+    "text": "This is a Quarto website.\nTo learn more about Quarto websites visit https://quarto.org/docs/websites."
+  },
+  {
     "objectID": "knowledge-dump/install_slurm.html",
     "href": "knowledge-dump/install_slurm.html",
     "title": "Install Slurm on WSL: test environment",
@@ -22,18 +40,11 @@
     ]
   },
   {
-    "objectID": "index.html",
-    "href": "index.html",
-    "title": "My Wiki",
-    "section": "",
-    "text": "This is a Quarto website.\nTo learn more about Quarto websites visit https://quarto.org/docs/websites."
-  },
-  {
     "objectID": "knowledge-dump/slurm-test-jobs.html",
     "href": "knowledge-dump/slurm-test-jobs.html",
     "title": "Slurm test jobs",
     "section": "",
-    "text": "Minimal sbatch test jobs using sleep to compare baseline vs funded account/QoS behavior.\nIf you do not specify an account, the job should run on the default account with its default QoS; for a funded project, add #SBATCH --account=proj_A in the script or submit with sbatch --account=proj_A script.sh.\nTo check queue wait after submission:\nsacct -j &lt;jobid&gt; --format=JobID,JobName,Partition,Account,QOS,Submit,Start,Elapsed,State\n\n\n#!/bin/bash\n#SBATCH --job-name=tiny-2m\n#SBATCH --time=00:02:00\n#SBATCH --cpus-per-task=1\n#SBATCH --mem=256M\n\ndate\nsleep 120\ndate\n\n\n\n#!/bin/bash\n#SBATCH --job-name=small-10m\n#SBATCH --time=00:10:00\n#SBATCH --cpus-per-task=1\n#SBATCH --mem=1G\n\ndate\nsleep 600\ndate\n\n\n\n#!/bin/bash\n#SBATCH --job-name=medium-1h\n#SBATCH --time=01:00:00\n#SBATCH --cpus-per-task=2\n#SBATCH --mem=4G\n\ndate\nsleep 3600\ndate\n\n\n\n#!/bin/bash\n#SBATCH --job-name=long-8h\n#SBATCH --time=08:00:00\n#SBATCH --cpus-per-task=4\n#SBATCH --mem=8G\n\ndate\nsleep 28800\ndate\n\n\n\n#!/bin/bash\n#SBATCH --job-name=large-cpu-2h\n#SBATCH --time=02:00:00\n#SBATCH --cpus-per-task=32\n#SBATCH --mem=32G\n\ndate\nsleep 7200\ndate\n\n\n\n#!/bin/bash\n#SBATCH --job-name=large-mem-2h\n#SBATCH --time=02:00:00\n#SBATCH --cpus-per-task=8\n#SBATCH --mem=128G\n\ndate\nsleep 7200\ndate\n\n\n\n#!/bin/bash\n#SBATCH --job-name=funded-check-30m\n#SBATCH --time=00:30:00\n#SBATCH --cpus-per-task=4\n#SBATCH --mem=8G\n#SBATCH --account=proj_A\n\ndate\nsleep 1800\ndate\n\n\n\n#!/bin/bash\n#SBATCH --job-name=nodes-check-30m\n#SBATCH --time=00:30:00\n#SBATCH --cpus-per-task=4\n#SBATCH --mem=8G\n#SBATCH --partition=nodes\n\ndate\nsleep 1800\ndate",
+    "text": "Minimal sbatch test jobs using sleep to compare baseline vs funded account/QoS behavior.\nSome clusters require an explicit account for every job. If you see Invalid account or account/partition combination specified, add a valid --account (and possibly a compatible --partition).\nFor a funded project, add #SBATCH --account=proj_a in the script or submit with sbatch --account=proj_a script.sh.\nTo check queue wait after submission:\nsacct -j &lt;jobid&gt; --format=JobID,JobName,Partition,Account,QOS,Submit,Start,Elapsed,State\nTo troubleshoot account/partition validation:\n# See your associations (account + allowed partition + qos)\nsacctmgr -nP show assoc where user=$USER format=Account,Partition,QOS\n\n# See cluster partitions\nscontrol show partition | grep -E 'PartitionName=|AllowAccounts='\n\n# Submit with explicit account (and partition when required)\nsbatch --account=&lt;valid_account&gt; --partition=&lt;valid_partition&gt; script.sh\n\n\n#!/bin/bash\n#SBATCH --job-name=tiny-2m\n#SBATCH --time=00:02:00\n#SBATCH --cpus-per-task=1\n#SBATCH --mem=256M\n\ndate\nsleep 120\ndate\n\n\n\n#!/bin/bash\n#SBATCH --job-name=small-10m\n#SBATCH --time=00:10:00\n#SBATCH --cpus-per-task=1\n#SBATCH --mem=1G\n\ndate\nsleep 600\ndate\n\n\n\n#!/bin/bash\n#SBATCH --job-name=medium-1h\n#SBATCH --time=01:00:00\n#SBATCH --cpus-per-task=2\n#SBATCH --mem=4G\n\ndate\nsleep 3600\ndate\n\n\n\n#!/bin/bash\n#SBATCH --job-name=long-8h\n#SBATCH --time=08:00:00\n#SBATCH --cpus-per-task=4\n#SBATCH --mem=8G\n\ndate\nsleep 28800\ndate\n\n\n\n#!/bin/bash\n#SBATCH --job-name=fullnode-8h\n#SBATCH --time=08:00:00\n#SBATCH --nodes=1\n#SBATCH --exclusive\n#SBATCH --ntasks-per-node=1\n#SBATCH --cpus-per-task=1\n#SBATCH --mem=1G\n\necho \"Job ID: $SLURM_JOB_ID\"\necho \"Node:\"\nscontrol show hostnames \"$SLURM_JOB_NODELIST\"\n\ndate\nsleep 28800\ndate\n\n\n\n#!/bin/bash\n#SBATCH --job-name=large-cpu-2h\n#SBATCH --time=02:00:00\n#SBATCH --cpus-per-task=32\n#SBATCH --mem=32G\n#SBATCH --account=proj_a\n\ndate\nsleep 7200\ndate\n\n\n\n#!/bin/bash\n#SBATCH --job-name=def-4\n#SBATCH --time=08:00:00\n#SBATCH --nodes=4\n#SBATCH --ntasks-per-node=1\n#SBATCH --cpus-per-task=1\n#SBATCH --mem=1G\n\necho \"Job ID: $SLURM_JOB_ID\"\necho \"Allocated nodes:\"\nscontrol show hostnames \"$SLURM_JOB_NODELIST\"\n\nsrun hostname | sort\n\ndate\nsleep 28800\ndate\n#!/bin/bash\n#SBATCH --job-name=funded-4\n#SBATCH --time=08:00:00\n#SBATCH --nodes=4\n#SBATCH --ntasks-per-node=1\n#SBATCH --cpus-per-task=1\n#SBATCH --mem=1G\n#SBATCH --account=proj_a\n\necho \"Job ID: $SLURM_JOB_ID\"\necho \"Allocated nodes:\"\nscontrol show hostnames \"$SLURM_JOB_NODELIST\"\n\nsrun hostname | sort\n\ndate\nsleep 28800\ndate\n\n\n\n#!/bin/bash\n#SBATCH --job-name=large-mem-2h\n#SBATCH --time=02:00:00\n#SBATCH --cpus-per-task=8\n#SBATCH --mem=128G\n\ndate\nsleep 7200\ndate\n\n\n\n#!/bin/bash\n#SBATCH --job-name=nodes-check-30m\n#SBATCH --time=00:30:00\n#SBATCH --cpus-per-task=4\n#SBATCH --mem=8G\n#SBATCH --partition=nodes\n\ndate\nsleep 1800\ndate",
     "crumbs": [
       "Knowledge Dump",
       "Slurm test jobs"
@@ -84,11 +95,33 @@
     ]
   },
   {
+    "objectID": "knowledge-dump/slurm-test-jobs.html#hour-full-node-exclusive-job",
+    "href": "knowledge-dump/slurm-test-jobs.html#hour-full-node-exclusive-job",
+    "title": "Slurm test jobs",
+    "section": "",
+    "text": "#!/bin/bash\n#SBATCH --job-name=fullnode-8h\n#SBATCH --time=08:00:00\n#SBATCH --nodes=1\n#SBATCH --exclusive\n#SBATCH --ntasks-per-node=1\n#SBATCH --cpus-per-task=1\n#SBATCH --mem=1G\n\necho \"Job ID: $SLURM_JOB_ID\"\necho \"Node:\"\nscontrol show hostnames \"$SLURM_JOB_NODELIST\"\n\ndate\nsleep 28800\ndate",
+    "crumbs": [
+      "Knowledge Dump",
+      "Slurm test jobs"
+    ]
+  },
+  {
     "objectID": "knowledge-dump/slurm-test-jobs.html#large-cpu-job",
     "href": "knowledge-dump/slurm-test-jobs.html#large-cpu-job",
     "title": "Slurm test jobs",
     "section": "",
-    "text": "#!/bin/bash\n#SBATCH --job-name=large-cpu-2h\n#SBATCH --time=02:00:00\n#SBATCH --cpus-per-task=32\n#SBATCH --mem=32G\n\ndate\nsleep 7200\ndate",
+    "text": "#!/bin/bash\n#SBATCH --job-name=large-cpu-2h\n#SBATCH --time=02:00:00\n#SBATCH --cpus-per-task=32\n#SBATCH --mem=32G\n#SBATCH --account=proj_a\n\ndate\nsleep 7200\ndate",
+    "crumbs": [
+      "Knowledge Dump",
+      "Slurm test jobs"
+    ]
+  },
+  {
+    "objectID": "knowledge-dump/slurm-test-jobs.html#node-job",
+    "href": "knowledge-dump/slurm-test-jobs.html#node-job",
+    "title": "Slurm test jobs",
+    "section": "",
+    "text": "#!/bin/bash\n#SBATCH --job-name=def-4\n#SBATCH --time=08:00:00\n#SBATCH --nodes=4\n#SBATCH --ntasks-per-node=1\n#SBATCH --cpus-per-task=1\n#SBATCH --mem=1G\n\necho \"Job ID: $SLURM_JOB_ID\"\necho \"Allocated nodes:\"\nscontrol show hostnames \"$SLURM_JOB_NODELIST\"\n\nsrun hostname | sort\n\ndate\nsleep 28800\ndate\n#!/bin/bash\n#SBATCH --job-name=funded-4\n#SBATCH --time=08:00:00\n#SBATCH --nodes=4\n#SBATCH --ntasks-per-node=1\n#SBATCH --cpus-per-task=1\n#SBATCH --mem=1G\n#SBATCH --account=proj_a\n\necho \"Job ID: $SLURM_JOB_ID\"\necho \"Allocated nodes:\"\nscontrol show hostnames \"$SLURM_JOB_NODELIST\"\n\nsrun hostname | sort\n\ndate\nsleep 28800\ndate",
     "crumbs": [
       "Knowledge Dump",
       "Slurm test jobs"
@@ -100,17 +133,6 @@
     "title": "Slurm test jobs",
     "section": "",
     "text": "#!/bin/bash\n#SBATCH --job-name=large-mem-2h\n#SBATCH --time=02:00:00\n#SBATCH --cpus-per-task=8\n#SBATCH --mem=128G\n\ndate\nsleep 7200\ndate",
-    "crumbs": [
-      "Knowledge Dump",
-      "Slurm test jobs"
-    ]
-  },
-  {
-    "objectID": "knowledge-dump/slurm-test-jobs.html#same-script-funded-account-test",
-    "href": "knowledge-dump/slurm-test-jobs.html#same-script-funded-account-test",
-    "title": "Slurm test jobs",
-    "section": "",
-    "text": "#!/bin/bash\n#SBATCH --job-name=funded-check-30m\n#SBATCH --time=00:30:00\n#SBATCH --cpus-per-task=4\n#SBATCH --mem=8G\n#SBATCH --account=proj_A\n\ndate\nsleep 1800\ndate",
     "crumbs": [
       "Knowledge Dump",
       "Slurm test jobs"
