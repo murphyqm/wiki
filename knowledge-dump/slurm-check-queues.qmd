@@ -1,0 +1,44 @@
+# Checking Slurm Queues
+
+List all the partitons available:
+
+```bash
+sinfo
+```
+
+To see states/allocation of different partitions:
+
+```bash
+sinfo -s
+```
+
+To see detailed node information:
+
+```bash
+sinfo -N
+```
+
+Then you can check the queue for a specific partition:
+
+```bash
+squeue -p partitionname
+```
+
+Also check what reservations exist on the hpc:
+
+```bash
+scontrol show reservations
+```
+
+And see which is active etc.:
+
+```bash
+sinfo -T
+```
+
+And then check the queue in a specific reservation:
+
+```bash
+squeue --reservation=reservation_name
+```
+

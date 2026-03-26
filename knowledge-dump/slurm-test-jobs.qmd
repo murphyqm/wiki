@@ -2,12 +2,27 @@
 
 Minimal `sbatch` test jobs using `sleep` to compare baseline vs funded account/QoS behavior.
 
-If you do not specify an account, the job should run on the default account with its default QoS; for a funded project, add `#SBATCH --account=proj_A` in the script or submit with `sbatch --account=proj_A script.sh`.
+Some clusters require an explicit account for every job. If you see `Invalid account or account/partition combination specified`, add a valid `--account` (and possibly a compatible `--partition`).
+
+For a funded project, add `#SBATCH --account=proj_a` in the script or submit with `sbatch --account=proj_a script.sh`.
 
 To check queue wait after submission:
 
 ```bash
 sacct -j <jobid> --format=JobID,JobName,Partition,Account,QOS,Submit,Start,Elapsed,State
+```
+
+To troubleshoot account/partition validation:
+
+```bash
+# See your associations (account + allowed partition + qos)
+sacctmgr -nP show assoc where user=$USER format=Account,Partition,QOS
+
+# See cluster partitions
+scontrol show partition | grep -E 'PartitionName=|AllowAccounts='
+
+# Submit with explicit account (and partition when required)
+sbatch --account=<valid_account> --partition=<valid_partition> script.sh
 ```
 
 ## Tiny and fast
@@ -66,6 +81,27 @@ sleep 28800
 date
 ```
 
+## 8-hour full-node exclusive job
+
+```bash
+#!/bin/bash
+#SBATCH --job-name=fullnode-8h
+#SBATCH --time=08:00:00
+#SBATCH --nodes=1
+#SBATCH --exclusive
+#SBATCH --ntasks-per-node=1
+#SBATCH --cpus-per-task=1
+#SBATCH --mem=1G
+
+echo "Job ID: $SLURM_JOB_ID"
+echo "Node:"
+scontrol show hostnames "$SLURM_JOB_NODELIST"
+
+date
+sleep 28800
+date
+```
+
 ## Large CPU job
 
 ```bash
@@ -74,9 +110,53 @@ date
 #SBATCH --time=02:00:00
 #SBATCH --cpus-per-task=32
 #SBATCH --mem=32G
+#SBATCH --account=proj_a
 
 date
 sleep 7200
+date
+```
+
+## 4 node job
+
+```bash
+#!/bin/bash
+#SBATCH --job-name=def-4
+#SBATCH --time=08:00:00
+#SBATCH --nodes=4
+#SBATCH --ntasks-per-node=1
+#SBATCH --cpus-per-task=1
+#SBATCH --mem=1G
+
+echo "Job ID: $SLURM_JOB_ID"
+echo "Allocated nodes:"
+scontrol show hostnames "$SLURM_JOB_NODELIST"
+
+srun hostname | sort
+
+date
+sleep 28800
+date
+```
+
+```bash
+#!/bin/bash
+#SBATCH --job-name=funded-4
+#SBATCH --time=08:00:00
+#SBATCH --nodes=4
+#SBATCH --ntasks-per-node=1
+#SBATCH --cpus-per-task=1
+#SBATCH --mem=1G
+#SBATCH --account=proj_a
+
+echo "Job ID: $SLURM_JOB_ID"
+echo "Allocated nodes:"
+scontrol show hostnames "$SLURM_JOB_NODELIST"
+
+srun hostname | sort
+
+date
+sleep 28800
 date
 ```
 
@@ -94,20 +174,6 @@ sleep 7200
 date
 ```
 
-## Same script, funded account test
-
-```bash
-#!/bin/bash
-#SBATCH --job-name=funded-check-30m
-#SBATCH --time=00:30:00
-#SBATCH --cpus-per-task=4
-#SBATCH --mem=8G
-#SBATCH --account=proj_A
-
-date
-sleep 1800
-date
-```
 
 ## Same shape, explicit partition test
 
