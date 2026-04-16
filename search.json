@@ -1,27 +1,5 @@
 [
   {
-    "objectID": "knowledge-dump/slurm-qos.html",
-    "href": "knowledge-dump/slurm-qos.html",
-    "title": "Quick reference QoS commands for Slurm",
-    "section": "",
-    "text": "Quick reference QoS commands for Slurm\nTo see what QoS have been set up on the system:\n# listing QoS\nsacctmgr show qos format=Name,Priority,MaxWall,MaxTRESPU,MaxJobsPU,GrpTRES\n\n# parsable output\nsacctmgr -P show qos format=Name,Priority,MaxWall,MaxTRESPU,MaxJobsPU,GrpTRES\n(N.B. to turn output from -p-formatted commands into markdown tables, just add a row of hyphens and pipes after the first line)\nTo see account information for the system:\n# Accounts info with formatting\nsacctmgr show assoc format=Account%30,User%20,Partition%15,QOS%30\n\n# parsable output (easy to grep/cut)\nsacctmgr -P show account format=Account,Descr,ParentName\nTo show history of QoS changes:\n# All transations\nsacctmgr show transactions\n\n# Transactions by a specific user\nsacctmgr show transactions Actor=&lt;username&gt;\n\n# Show all transactions, but filter out account creation\nsacctmgr show transactions | grep -vE \"Add Associations|Add Users\"",
-    "crumbs": [
-      "Knowledge Dump",
-      "Quick reference QoS commands for Slurm"
-    ]
-  },
-  {
-    "objectID": "knowledge-dump/slurm-check-queues.html",
-    "href": "knowledge-dump/slurm-check-queues.html",
-    "title": "Checking Slurm Queues",
-    "section": "",
-    "text": "Checking Slurm Queues\nList all the partitons available:\nsinfo\nTo see states/allocation of different partitions:\nsinfo -s\nTo see detailed node information:\nsinfo -N\nThen you can check the queue for a specific partition:\nsqueue -p partitionname\nAlso check what reservations exist on the hpc:\nscontrol show reservations\nAnd see which is active etc.:\nsinfo -T\nAnd then check the queue in a specific reservation:\nsqueue --reservation=reservation_name",
-    "crumbs": [
-      "Knowledge Dump",
-      "Checking Slurm Queues"
-    ]
-  },
-  {
     "objectID": "index.html",
     "href": "index.html",
     "title": "My Wiki",
@@ -29,14 +7,36 @@
     "text": "This is a Quarto website.\nTo learn more about Quarto websites visit https://quarto.org/docs/websites."
   },
   {
-    "objectID": "knowledge-dump/install_slurm.html",
-    "href": "knowledge-dump/install_slurm.html",
-    "title": "Install Slurm on WSL: test environment",
+    "objectID": "knowledge-dump/slurm_reservations.html",
+    "href": "knowledge-dump/slurm_reservations.html",
+    "title": "Reservations in Slurm",
     "section": "",
-    "text": "Install Slurm on WSL: test environment\nStep-by-step install and setup of Slurm on WSL2 for testing purposes. Mainly followed this guide: Slurm for Dummies with some modifications for a single-node WSL2 mini set-up.\nObviously this isn’t going to let you test all config changes, but will allow messing with user accounts/QoS permissions etc.\nI’ve just copied the commands I used below in order; WSL2 was Ubuntu 24.05.5 LTS. Obviously, again, not matching the OS of the cluster.\nsudo apt update\nsudo apt upgrade\nsudo apt install munge libmunge2 libmunge-dev\n\n# to test if it worked\nmunge -n | unmunge | grep STATUS\n\n# fix permissions\nsudo chown -R munge: /etc/munge/ /var/log/munge/ /var/lib/munge/ /run/munge/\nsudo chmod 0700 /etc/munge/ /var/log/munge/ /var/lib/munge/\nsudo chmod 0755 /run/munge/\nsudo chmod 0700 /etc/munge/munge.key\nsudo chown -R munge: /etc/munge/munge.key\n\n# so that it runs on startup\nsystemctl enable munge\nsystemctl restart munge\n\n# checking if it works\nsystemctl status munge\n\n# Install slurm\nsudo apt install slurm-wlm\n\n# To find config file\ncd /usr/share/doc/slurmctld/\nexplorer.exe .\n# launch the html file configure template\n\n# to figure out name for ControlMachine, etc.:\nhostname\n\n# for cores\nslurmd -C\n\n# for memory, - approx 512 MB for safety\nfree -m\nOutput from slurmd -C:\nNodeName=&lt;hostname-output&gt; CPUs=20 Boards=1 SocketsPerBoard=1 CoresPerSocket=10 ThreadsPerCore=2 RealMemory=15707\nUpTime=0-08:37:17\nConfig settings:\n\nClusterName: airetest\nSlurmctldHost: \nSlurmUser: slurm\nNodeName: \nRealMemory: 14500\n\nSee other output from slurmd -C above for CPUs etc.\n\nProctrackType: proctrack/linuxproc\nTaskPlugin: task/none\nSelectType: select/cons_tres\nSelectTypeParameters: CR_Core_Memory\nJobAcctGatherType: jobacct_gather/linux (mimicking current set-up, also avoids fragile WSL cgroup shenanigans)\n\nOther settings left default.\nClick submit, and it generates a config file for you, copy and paste this into the following file:\nsudo nano /etc/slurm/slurm.conf\n\nsystemctl enable slurmctld\nsystemctl restart slurmctld\n\nsystemctl status slurmctld\nsinfo\nCan then submit a little test job to see what happens:\n#!/bin/bash\nsleep 30\nenv\n# 1) See node state/reason\nsinfo -N -l\nscontrol show node &lt;hostname-output&gt; | egrep \"State=|Reason=|CfgTRES|RealMemory|CPUTot\"\n\n# 2) Check daemons/auth\nsystemctl is-active munge slurmctld slurmd\n\n# 3) If any are not active:\nsudo systemctl restart munge slurmctld slurmd\n\n# 4) Clear DOWN/DRAIN\nsudo scontrol update NodeName=&lt;hostname-output&gt; State=RESUME\n\n# 5) Recheck\nsinfo -N -l\nsqueue\nEnded up having to also run:\nsudo systemctl enable --now munge slurmctld slurmd\nsudo systemctl status slurmd --no-pager -l\nsudo journalctl -u slurmd -n 80 --no-pager\n\nsudo scontrol update NodeName=&lt;hostname-output&gt; State=RESUME\nJobs can be submitted, queue and run. I’ll have to set up sacctmgr to properly test accounts/QoS/priority behaviour etc., but that’s for another day.",
+    "text": "scontrol show reservations\nExample output:\nReservationName=teaching_friday StartTime=2026-04-17T11:00:00 EndTime=2026-04-17T13:00:00 Duration=02:00:00\n   Nodes=node046 NodeCnt=1 CoreCnt=126 Features=(null) PartitionName=teachingnodes Flags=FLEX,WEEKLY,MAGNETIC\n     NodeName=node046 CoreIDs=0-4,6,8-13,15-17,19-21,24-30,41-79,84-88,91,108-112,115-138,141-167\n   TRES=cpu=126\n   Users=(null) Groups=(null) Accounts=teaching Licenses=(null) State=INACTIVE BurstBuffer=(null)\n   MaxStartDelay=(null)\n\n\n\nGenerally, while you can update reservations, certain parameters can’t be modified. It’s often more straightforward to delete and recreate the reservation.\nscontrol delete ReservationName=teaching_friday",
     "crumbs": [
       "Knowledge Dump",
-      "Install Slurm on WSL: test environment"
+      "Reservations in Slurm"
+    ]
+  },
+  {
+    "objectID": "knowledge-dump/slurm_reservations.html#list-current-reservations",
+    "href": "knowledge-dump/slurm_reservations.html#list-current-reservations",
+    "title": "Reservations in Slurm",
+    "section": "",
+    "text": "scontrol show reservations\nExample output:\nReservationName=teaching_friday StartTime=2026-04-17T11:00:00 EndTime=2026-04-17T13:00:00 Duration=02:00:00\n   Nodes=node046 NodeCnt=1 CoreCnt=126 Features=(null) PartitionName=teachingnodes Flags=FLEX,WEEKLY,MAGNETIC\n     NodeName=node046 CoreIDs=0-4,6,8-13,15-17,19-21,24-30,41-79,84-88,91,108-112,115-138,141-167\n   TRES=cpu=126\n   Users=(null) Groups=(null) Accounts=teaching Licenses=(null) State=INACTIVE BurstBuffer=(null)\n   MaxStartDelay=(null)",
+    "crumbs": [
+      "Knowledge Dump",
+      "Reservations in Slurm"
+    ]
+  },
+  {
+    "objectID": "knowledge-dump/slurm_reservations.html#delete-a-reservation",
+    "href": "knowledge-dump/slurm_reservations.html#delete-a-reservation",
+    "title": "Reservations in Slurm",
+    "section": "",
+    "text": "Generally, while you can update reservations, certain parameters can’t be modified. It’s often more straightforward to delete and recreate the reservation.\nscontrol delete ReservationName=teaching_friday",
+    "crumbs": [
+      "Knowledge Dump",
+      "Reservations in Slurm"
     ]
   },
   {
@@ -147,6 +147,39 @@
     "crumbs": [
       "Knowledge Dump",
       "Slurm test jobs"
+    ]
+  },
+  {
+    "objectID": "knowledge-dump/slurm-check-queues.html",
+    "href": "knowledge-dump/slurm-check-queues.html",
+    "title": "Checking Slurm Queues",
+    "section": "",
+    "text": "Checking Slurm Queues\nList all the partitons available:\nsinfo\nTo see states/allocation of different partitions:\nsinfo -s\nTo see detailed node information:\nsinfo -N\nThen you can check the queue for a specific partition:\nsqueue -p partitionname\nAlso check what reservations exist on the hpc:\nscontrol show reservations\nAnd see which is active etc.:\nsinfo -T\nAnd then check the queue in a specific reservation:\nsqueue --reservation=reservation_name",
+    "crumbs": [
+      "Knowledge Dump",
+      "Checking Slurm Queues"
+    ]
+  },
+  {
+    "objectID": "knowledge-dump/slurm-qos.html",
+    "href": "knowledge-dump/slurm-qos.html",
+    "title": "Quick reference QoS commands for Slurm",
+    "section": "",
+    "text": "Quick reference QoS commands for Slurm\nTo see what QoS have been set up on the system:\n# listing QoS\nsacctmgr show qos format=Name,Priority,MaxWall,MaxTRESPU,MaxJobsPU,GrpTRES\n\n# parsable output\nsacctmgr -P show qos format=Name,Priority,MaxWall,MaxTRESPU,MaxJobsPU,GrpTRES\n(N.B. to turn output from -p-formatted commands into markdown tables, just add a row of hyphens and pipes after the first line)\nTo see account information for the system:\n# Accounts info with formatting\nsacctmgr show assoc format=Account%30,User%20,Partition%15,QOS%30\n\n# parsable output (easy to grep/cut)\nsacctmgr -P show account format=Account,Descr,ParentName\nTo show history of QoS changes:\n# All transations\nsacctmgr show transactions\n\n# Transactions by a specific user\nsacctmgr show transactions Actor=&lt;username&gt;\n\n# Show all transactions, but filter out account creation\nsacctmgr show transactions | grep -vE \"Add Associations|Add Users\"",
+    "crumbs": [
+      "Knowledge Dump",
+      "Quick reference QoS commands for Slurm"
+    ]
+  },
+  {
+    "objectID": "knowledge-dump/install_slurm.html",
+    "href": "knowledge-dump/install_slurm.html",
+    "title": "Install Slurm on WSL: test environment",
+    "section": "",
+    "text": "Install Slurm on WSL: test environment\nStep-by-step install and setup of Slurm on WSL2 for testing purposes. Mainly followed this guide: Slurm for Dummies with some modifications for a single-node WSL2 mini set-up.\nObviously this isn’t going to let you test all config changes, but will allow messing with user accounts/QoS permissions etc.\nI’ve just copied the commands I used below in order; WSL2 was Ubuntu 24.05.5 LTS. Obviously, again, not matching the OS of the cluster.\nsudo apt update\nsudo apt upgrade\nsudo apt install munge libmunge2 libmunge-dev\n\n# to test if it worked\nmunge -n | unmunge | grep STATUS\n\n# fix permissions\nsudo chown -R munge: /etc/munge/ /var/log/munge/ /var/lib/munge/ /run/munge/\nsudo chmod 0700 /etc/munge/ /var/log/munge/ /var/lib/munge/\nsudo chmod 0755 /run/munge/\nsudo chmod 0700 /etc/munge/munge.key\nsudo chown -R munge: /etc/munge/munge.key\n\n# so that it runs on startup\nsystemctl enable munge\nsystemctl restart munge\n\n# checking if it works\nsystemctl status munge\n\n# Install slurm\nsudo apt install slurm-wlm\n\n# To find config file\ncd /usr/share/doc/slurmctld/\nexplorer.exe .\n# launch the html file configure template\n\n# to figure out name for ControlMachine, etc.:\nhostname\n\n# for cores\nslurmd -C\n\n# for memory, - approx 512 MB for safety\nfree -m\nOutput from slurmd -C:\nNodeName=&lt;hostname-output&gt; CPUs=20 Boards=1 SocketsPerBoard=1 CoresPerSocket=10 ThreadsPerCore=2 RealMemory=15707\nUpTime=0-08:37:17\nConfig settings:\n\nClusterName: airetest\nSlurmctldHost: \nSlurmUser: slurm\nNodeName: \nRealMemory: 14500\n\nSee other output from slurmd -C above for CPUs etc.\n\nProctrackType: proctrack/linuxproc\nTaskPlugin: task/none\nSelectType: select/cons_tres\nSelectTypeParameters: CR_Core_Memory\nJobAcctGatherType: jobacct_gather/linux (mimicking current set-up, also avoids fragile WSL cgroup shenanigans)\n\nOther settings left default.\nClick submit, and it generates a config file for you, copy and paste this into the following file:\nsudo nano /etc/slurm/slurm.conf\n\nsystemctl enable slurmctld\nsystemctl restart slurmctld\n\nsystemctl status slurmctld\nsinfo\nCan then submit a little test job to see what happens:\n#!/bin/bash\nsleep 30\nenv\n# 1) See node state/reason\nsinfo -N -l\nscontrol show node &lt;hostname-output&gt; | egrep \"State=|Reason=|CfgTRES|RealMemory|CPUTot\"\n\n# 2) Check daemons/auth\nsystemctl is-active munge slurmctld slurmd\n\n# 3) If any are not active:\nsudo systemctl restart munge slurmctld slurmd\n\n# 4) Clear DOWN/DRAIN\nsudo scontrol update NodeName=&lt;hostname-output&gt; State=RESUME\n\n# 5) Recheck\nsinfo -N -l\nsqueue\nEnded up having to also run:\nsudo systemctl enable --now munge slurmctld slurmd\nsudo systemctl status slurmd --no-pager -l\nsudo journalctl -u slurmd -n 80 --no-pager\n\nsudo scontrol update NodeName=&lt;hostname-output&gt; State=RESUME\nJobs can be submitted, queue and run. I’ll have to set up sacctmgr to properly test accounts/QoS/priority behaviour etc., but that’s for another day.",
+    "crumbs": [
+      "Knowledge Dump",
+      "Install Slurm on WSL: test environment"
     ]
   }
 ]

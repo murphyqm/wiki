@@ -1,23 +1,27 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
-    <loc>https://murphyqm.github.io/wiki/knowledge-dump/slurm-qos.html</loc>
-    <lastmod>2026-03-26T14:16:38.030Z</lastmod>
-  </url>
-  <url>
-    <loc>https://murphyqm.github.io/wiki/knowledge-dump/slurm-check-queues.html</loc>
-    <lastmod>2026-03-26T14:16:38.030Z</lastmod>
-  </url>
-  <url>
     <loc>https://murphyqm.github.io/wiki/index.html</loc>
-    <lastmod>2026-03-26T14:16:38.029Z</lastmod>
+    <lastmod>2026-04-16T08:58:56.284Z</lastmod>
   </url>
   <url>
-    <loc>https://murphyqm.github.io/wiki/knowledge-dump/install_slurm.html</loc>
-    <lastmod>2026-03-26T14:16:38.029Z</lastmod>
+    <loc>https://murphyqm.github.io/wiki/knowledge-dump/slurm_reservations.html</loc>
+    <lastmod>2026-04-16T08:58:56.284Z</lastmod>
   </url>
   <url>
     <loc>https://murphyqm.github.io/wiki/knowledge-dump/slurm-test-jobs.html</loc>
-    <lastmod>2026-03-26T14:16:38.030Z</lastmod>
+    <lastmod>2026-04-16T08:58:56.284Z</lastmod>
+  </url>
+  <url>
+    <loc>https://murphyqm.github.io/wiki/knowledge-dump/slurm-check-queues.html</loc>
+    <lastmod>2026-04-16T08:58:56.284Z</lastmod>
+  </url>
+  <url>
+    <loc>https://murphyqm.github.io/wiki/knowledge-dump/slurm-qos.html</loc>
+    <lastmod>2026-04-16T08:58:56.284Z</lastmod>
+  </url>
+  <url>
+    <loc>https://murphyqm.github.io/wiki/knowledge-dump/install_slurm.html</loc>
+    <lastmod>2026-04-16T08:58:56.284Z</lastmod>
   </url>
 </urlset>
